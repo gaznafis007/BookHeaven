@@ -15,8 +15,9 @@ export interface IUser extends Document {
   products: {
     productId: string;
     title: string;
-    price: number;
     description: string;
+    author: string;
+    price: number;
   }[];
   credits: number;
   createdAt: Date;
@@ -44,8 +45,9 @@ const UserSchema = new Schema<IUser>({
       {
         productId: { type: String, required: true },
         title: { type: String, required: true },
-        price: { type: Number, required: true },
         description: { type: String, required: true },
+        author: { type: String, required: true },
+        price: { type: Number, required: true },
       },
     ],
     default: [],
