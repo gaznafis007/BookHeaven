@@ -8,7 +8,7 @@ export interface IUser extends Document {
   referredBy: string | null;
   referredUsers: {
     userId: string;
-    status: string;
+    status: "pending" | "converted";
     createdAt: Date;
     convertedAt: Date | null;
   }[];
@@ -18,6 +18,7 @@ export interface IUser extends Document {
     description: string;
     author: string;
     price: number;
+    purchasedAt: Date;
   }[];
   credits: number;
   createdAt: Date;
@@ -33,7 +34,11 @@ const UserSchema = new Schema<IUser>({
     type: [
       {
         userId: { type: String, required: true },
-        status: { type: String, required: true },
+        status: {
+          type: String,
+          enum: ["pending", "converted"],
+          required: true,
+        },
         createdAt: { type: Date, required: true, default: Date.now },
         convertedAt: { type: Date, default: null },
       },
@@ -48,6 +53,7 @@ const UserSchema = new Schema<IUser>({
         description: { type: String, required: true },
         author: { type: String, required: true },
         price: { type: Number, required: true },
+        purchasedAt: { type: Date, required: true, default: Date.now },
       },
     ],
     default: [],
