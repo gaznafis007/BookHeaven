@@ -13,22 +13,25 @@ export interface IProduct extends Document {
   createdAt: Date;
 }
 
-const ProductSchema = new Schema<IProduct>({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  author: { type: String, required: true },
-  price: { type: Number, required: true },
-  purchasedBy: {
-    type: [
-      {
-        userId: { type: String, required: true },
-        name: { type: String, required: true },
-        email: { type: String, required: true },
-      },
-    ],
-    default: [],
+const ProductSchema = new Schema<IProduct>(
+  {
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    author: { type: String, required: true },
+    price: { type: Number, required: true },
+    purchasedBy: {
+      type: [
+        {
+          userId: { type: String, required: true },
+          name: { type: String, required: true },
+          email: { type: String, required: true },
+        },
+      ],
+      default: [],
+    },
+    createdAt: { type: Date, default: Date.now },
   },
-  createdAt: { type: Date, default: Date.now },
-});
+  { versionKey: false }
+);
 
 export const Product = mongoose.model<IProduct>("Product", ProductSchema);
