@@ -131,16 +131,32 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     product: Product
   ): Promise<User | null> => {
     try {
+      if (!product._id) throw new Error("Product ID missing");
+
       const res = await fetch(`${API_URL}/${userId}/purchase`, {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(product),
+        body: JSON.stringify({
+          productId: product._id,
+          title: product.title,
+          description: product.description,
+          author: product.author,
+          price: product.price,
+        }),
       });
 
-      if (!res.ok) throw new Error("Failed to process purchase");
-      const data: { user: User } = await res.json();
+      const data = await res.json();
+
+      if (!res.ok) {
+        // backend might send error in `error` field
+        throw new Error(
+          data.error || data.message || "Failed to process purchase"
+        );
+      }
+
       const updatedUser = data.user;
 
+      // Update state
       setUsers((prev) =>
         prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
       );

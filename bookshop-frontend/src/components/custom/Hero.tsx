@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -28,19 +29,14 @@ export function Hero() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                Browse Collection
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary/10 hover:text-black bg-transparent"
-              >
-                Learn More
-              </Button>
+              <Link href="/books">
+                <Button
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground hover:cursor-pointer"
+                >
+                  Browse Collection
+                </Button>
+              </Link>
             </div>
 
             <div className="flex gap-8 pt-8">

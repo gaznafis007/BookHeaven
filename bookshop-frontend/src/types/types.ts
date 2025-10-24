@@ -4,14 +4,28 @@ export interface AuthFormProps {
   initialType?: AuthType;
 }
 
-export interface Product {
-  productId: string;
+export interface PurchasedProduct {
+  _id: string;
   title: string;
   description: string;
   author: string;
   price: number;
-  purchasedAt?: string;
+  purchasedAt: string;
+}
+
+export interface Product {
   _id: string;
+  title: string;
+  description: string;
+  author: string;
+  price: number;
+  purchasedBy: {
+    userId: string;
+    name: string;
+    email: string;
+    _id: string;
+  }[];
+  createdAt: string;
 }
 
 export interface ReferredUser {
@@ -31,7 +45,7 @@ export interface User {
   referredBy: string | null;
   credits: number;
   referredUsers: ReferredUser[];
-  products: Product[];
+  products: PurchasedProduct[];
   createdAt: string;
 }
 

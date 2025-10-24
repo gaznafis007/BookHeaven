@@ -19,6 +19,13 @@ export default function ProfilePage() {
     router.push("/login");
   };
 
+  const handleCopyReferralCode = () => {
+    if (currentUser?.referralCode) {
+      navigator.clipboard.writeText(currentUser.referralCode);
+      toast.success("Referral code copied to clipboard!");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -59,9 +66,14 @@ export default function ProfilePage() {
                 <Badge className="bg-green-600 text-white">
                   Referred By: {currentUser.referredBy || "N/A"}
                 </Badge>
-                <Badge className="bg-purple-600 text-white">
-                  Referral Code: {currentUser.referralCode}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-purple-600 text-white">
+                    Referral Code: {currentUser.referralCode}
+                  </Badge>
+                  <Button size="sm" onClick={handleCopyReferralCode}>
+                    Copy
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
