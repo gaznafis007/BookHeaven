@@ -5,12 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-type AuthType = "login" | "signup";
-
-interface AuthFormProps {
-  initialType?: AuthType;
-}
+import { AuthFormProps, AuthType } from "@/types/types";
 
 export function AuthForm({ initialType = "login" }: AuthFormProps) {
   const [authType, setAuthType] = useState<AuthType>(initialType);
