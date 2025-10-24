@@ -1,11 +1,11 @@
-import React from "react";
+import { AuthForm } from "@/components/custom/AuthForm";
 
-const page = () => {
+const Page = () => {
   return (
     <div>
-      <h1>signup</h1>
+      <AuthForm initialType="signup" />
     </div>
   );
 };
 
-export default page;
+export default Page;

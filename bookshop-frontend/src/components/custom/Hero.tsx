@@ -34,7 +34,7 @@ export function Hero() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-primary text-primary hover:bg-primary/10 bg-transparent"
+                className="border-primary text-primary hover:bg-primary/10 hover:text-black bg-transparent"
               >
                 Learn More
               </Button>
