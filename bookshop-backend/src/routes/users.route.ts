@@ -4,13 +4,11 @@ import {
   getAllUsers,
   getUserById,
   handlePurchase,
+  loginUser,
 } from "../core/users.core.js";
 
 const router = Router();
 
-/**
- * Get all users
- */
 router.get("/", async (_, res) => {
   try {
     const users = await getAllUsers();
@@ -20,9 +18,6 @@ router.get("/", async (_, res) => {
   }
 });
 
-/**
- * Get user by ID
- */
 router.get("/:id", async (req, res) => {
   try {
     const user = await getUserById(req.params.id);
@@ -33,9 +28,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-/**
- * Create a new user
- */
 router.post("/", async (req, res) => {
   try {
     const newUser = await createUser(req.body);
@@ -49,10 +41,19 @@ router.post("/", async (req, res) => {
   }
 });
 
-/**
- * Process product purchase for a user
- * Updates credits, purchase history, and referral rewards
- */
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).json({ error: "Email and password required" });
+
+    const user = await loginUser(email, password);
+    res.json(user);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message || "Login failed" });
+  }
+});
+
 router.patch("/:id/purchase", async (req, res) => {
   try {
     const productData = req.body;

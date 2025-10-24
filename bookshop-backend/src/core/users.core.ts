@@ -4,26 +4,15 @@ import { userValidator } from "../validator/users.validator.js";
 import { Types } from "mongoose";
 import { Product } from "../db/schema/products.schema.js";
 
-/**
- * Fetch all users from the database
- */
 export const getAllUsers = async () => {
   return await User.find();
 };
 
-/**
- * Get a single user by ID
- * @param id - User ID
- */
 export const getUserById = async (id: string) => {
   if (!Types.ObjectId.isValid(id)) return null;
   return await User.findById(id);
 };
 
-/**
- * Create a new user
- * @param data - User registration data
- */
 export const createUser = async (data: any) => {
   const parsed = userValidator.parse(data);
   const { name, email, password, referredBy } = parsed;
@@ -46,7 +35,6 @@ export const createUser = async (data: any) => {
     credits: 50,
   });
 
-  // Add referral tracking if referredBy is provided
   if (referredBy) {
     const refCode = String(referredBy).toUpperCase();
     const referrer = await User.findOne({ referralCode: refCode });
@@ -69,11 +57,18 @@ export const createUser = async (data: any) => {
   return newUser;
 };
 
-/**
- * Handle user purchase of a product
- * @param userId - ID of the purchasing user
- * @param productData - Details of the purchased product
- */
+export const loginUser = async (email: string, password: string) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("Invalid email or password");
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) throw new Error("Invalid email or password");
+
+  const u = user.toObject();
+  delete (u as any).password;
+  return u;
+};
+
 export const handlePurchase = async (userId: string, productData: any) => {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
