@@ -1,5 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+/**
+ * Product interface for Mongoose
+ */
 export interface IProduct extends Document {
   title: string;
   description: string;
@@ -13,6 +16,9 @@ export interface IProduct extends Document {
   createdAt: Date;
 }
 
+/**
+ * Mongoose schema for products
+ */
 const ProductSchema = new Schema<IProduct>(
   {
     title: { type: String, required: true },
@@ -34,4 +40,7 @@ const ProductSchema = new Schema<IProduct>(
   { versionKey: false }
 );
 
+/**
+ * Product model
+ */
 export const Product = mongoose.model<IProduct>("Product", ProductSchema);

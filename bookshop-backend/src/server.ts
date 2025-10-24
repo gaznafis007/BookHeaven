@@ -9,13 +9,13 @@ dotenv.config();
 const app = express();
 
 connectDB();
+
 app.use(express.json());
 
-// all routes
 app.use("/api", apiRoutes);
 
-// health routes
 app.get("/", (_req: Request, res: Response) => res.redirect("/api"));
+
 app.get("/api", (_req: Request, res: Response) => {
   res.json({
     status: "ok",

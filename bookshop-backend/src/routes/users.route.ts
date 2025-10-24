@@ -8,6 +8,9 @@ import {
 
 const router = Router();
 
+/**
+ * Get all users
+ */
 router.get("/", async (_, res) => {
   try {
     const users = await getAllUsers();
@@ -17,6 +20,9 @@ router.get("/", async (_, res) => {
   }
 });
 
+/**
+ * Get user by ID
+ */
 router.get("/:id", async (req, res) => {
   try {
     const user = await getUserById(req.params.id);
@@ -27,6 +33,9 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+/**
+ * Create a new user
+ */
 router.post("/", async (req, res) => {
   try {
     const newUser = await createUser(req.body);
@@ -41,15 +50,12 @@ router.post("/", async (req, res) => {
 });
 
 /**
- * PATCH /api/users/:id/purchase
- * Handles purchase & referral credit in one call
- * Body: { productId, title, description?, author?, price }
+ * Process product purchase for a user
+ * Updates credits, purchase history, and referral rewards
  */
 router.patch("/:id/purchase", async (req, res) => {
   try {
     const productData = req.body;
-
-    // Call core function that handles user + product updates + referral
     const result = await handlePurchase(req.params.id, productData);
 
     const userObj = result.user.toObject();

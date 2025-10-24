@@ -1,5 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+/**
+ * User interface for Mongoose
+ */
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -24,6 +27,9 @@ export interface IUser extends Document {
   createdAt: Date;
 }
 
+/**
+ * Mongoose schema for users
+ */
 const UserSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
@@ -65,4 +71,7 @@ const UserSchema = new Schema<IUser>(
   { versionKey: false }
 );
 
+/**
+ * User model
+ */
 export const User = mongoose.model<IUser>("User", UserSchema);

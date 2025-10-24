@@ -4,8 +4,7 @@ import { Product } from "../db/schema/products.schema.js";
 const router = Router();
 
 /**
- * GET /api/products
- * Fetch all products
+ * Get all products
  */
 router.get("/", async (_req, res) => {
   try {
@@ -17,8 +16,7 @@ router.get("/", async (_req, res) => {
 });
 
 /**
- * GET /api/products/:id
- * Fetch a single product
+ * Get a single product by ID
  */
 router.get("/:id", async (req, res) => {
   try {

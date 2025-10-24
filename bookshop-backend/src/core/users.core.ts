@@ -4,15 +4,26 @@ import { userValidator } from "../validator/users.validator.js";
 import { Types } from "mongoose";
 import { Product } from "../db/schema/products.schema.js";
 
+/**
+ * Fetch all users from the database
+ */
 export const getAllUsers = async () => {
   return await User.find();
 };
 
+/**
+ * Get a single user by ID
+ * @param id - User ID
+ */
 export const getUserById = async (id: string) => {
   if (!Types.ObjectId.isValid(id)) return null;
   return await User.findById(id);
 };
 
+/**
+ * Create a new user
+ * @param data - User registration data
+ */
 export const createUser = async (data: any) => {
   const parsed = userValidator.parse(data);
   const { name, email, password, referredBy } = parsed;
@@ -32,9 +43,10 @@ export const createUser = async (data: any) => {
     password: hashedPassword,
     referralCode,
     referredBy: referredBy ? String(referredBy).toUpperCase() : null,
-    credits: 0,
+    credits: 50,
   });
 
+  // Add referral tracking if referredBy is provided
   if (referredBy) {
     const refCode = String(referredBy).toUpperCase();
     const referrer = await User.findOne({ referralCode: refCode });
@@ -58,29 +70,34 @@ export const createUser = async (data: any) => {
 };
 
 /**
- * Handle purchase with proper types and purchasedAt
+ * Handle user purchase of a product
+ * @param userId - ID of the purchasing user
+ * @param productData - Details of the purchased product
  */
 export const handlePurchase = async (userId: string, productData: any) => {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
 
   const { productId, title, description, author, price } = productData;
+  const productPrice = Number(price);
 
-  // check if product already purchased
   const alreadyPurchased = user.products.some((p) => p.productId === productId);
   if (alreadyPurchased) return { user, credited: false };
 
-  // add product with purchasedAt
+  if (user.credits < productPrice) {
+    throw new Error("Insufficient credits to purchase this product");
+  }
+
+  user.credits -= productPrice;
   user.products.push({
     productId,
     title,
     description,
     author,
-    price: Number(price),
-    purchasedAt: new Date(), // required field
+    price: productPrice,
+    purchasedAt: new Date(),
   });
 
-  // referral logic
   let credited = false;
   let referrer: IUser | null = null;
 
@@ -95,10 +112,12 @@ export const handlePurchase = async (userId: string, productData: any) => {
       const referredUser = referrer.referredUsers.find(
         (u: any) => u.userId === userId
       );
+
       if (referredUser) {
         referredUser.status = "converted";
         referredUser.convertedAt = new Date();
       }
+
       await referrer.save();
     }
   }
