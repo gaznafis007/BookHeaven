@@ -13,7 +13,6 @@ import Cookies from "js-cookie"; // npm install js-cookie
 
 const API_URL = "https://bookshop-backend-api.vercel.app/api/users";
 
-// Create context
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
@@ -22,17 +21,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Handles errors in async functions
-   */
   const handleError = (err: unknown) => {
     if (err instanceof Error) setError(err.message);
     else setError(String(err));
   };
 
-  /**
-   * Fetch all users from backend
-   */
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
@@ -48,9 +41,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  /**
-   * Load currentUser and token from cookies on mount
-   */
   useEffect(() => {
     const token = Cookies.get("token");
     const storedUser = Cookies.get("currentUser");
@@ -62,9 +52,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [fetchUsers]);
 
-  /**
-   * Save currentUser to cookie whenever it changes
-   */
   useEffect(() => {
     if (currentUser) {
       Cookies.set("currentUser", JSON.stringify(currentUser), { expires: 1 });
@@ -75,9 +62,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [currentUser]);
 
-  /**
-   * Create a new user and auto-login
-   */
+  /** Create new user (signup) */
   const createUser = async (
     name: string,
     email: string,
@@ -103,9 +88,31 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /**
-   * Get a user by their ID
-   */
+  /** Login user */
+  const loginUser = async (
+    email: string,
+    password: string
+  ): Promise<User | null> => {
+    try {
+      const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Login failed");
+
+      setCurrentUser(data);
+      return data;
+    } catch (err: unknown) {
+      handleError(err);
+      return null;
+    }
+  };
+
+  /** Get a user by ID */
   const getUserById = async (id: string): Promise<User | null> => {
     try {
       const res = await fetch(`${API_URL}/${id}`);
@@ -118,9 +125,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /**
-   * Purchase a product for the current user
-   */
+  /** Purchase product */
   const purchaseProduct = async (
     userId: string,
     product: Product
@@ -136,12 +141,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const data: { user: User } = await res.json();
       const updatedUser = data.user;
 
-      // Update users list
       setUsers((prev) =>
         prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
       );
-
-      // Update currentUser if it's the same
       if (currentUser && currentUser._id === updatedUser._id)
         setCurrentUser(updatedUser);
 
@@ -153,9 +155,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /**
-   * Logout the user
-   */
+  /** Logout */
   const logout = () => {
     setCurrentUser(null);
     Cookies.remove("token");
@@ -171,6 +171,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         error,
         fetchUsers,
         createUser,
+        loginUser,
         getUserById,
         purchaseProduct,
         setCurrentUser,
@@ -182,9 +183,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-/**
- * Custom hook to use UserContext
- */
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) throw new Error("useUser must be used within a UserProvider");

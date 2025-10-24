@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/context/AuthContext";
 import { AuthFormProps, AuthType } from "@/types/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 export function AuthForm({ initialType = "login" }: AuthFormProps) {
+  const router = useRouter();
   const [authType, setAuthType] = useState<AuthType>(initialType);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,22 +22,57 @@ export function AuthForm({ initialType = "login" }: AuthFormProps) {
     referredBy: "",
   });
 
+  const { createUser, loginUser } = useUser();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLogin = () => {
-    console.log({ email: formData.email, password: formData.password });
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      const user = await loginUser(formData.email, formData.password);
+
+      if (user) {
+        toast.success("Login successful!");
+        router.push("/profile");
+      } else {
+        toast.error("Invalid email or password");
+      }
+    } catch {
+      toast.error("Login failed");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSignup = () => {
-    console.log({
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      referredBy: formData.referredBy,
-    });
+  const handleSignup = async () => {
+    setIsLoading(true);
+    try {
+      if (!formData.name || !formData.email || !formData.password) {
+        toast.error("Please fill all required fields");
+        return;
+      }
+
+      const user = await createUser(
+        formData.name,
+        formData.email,
+        formData.password,
+        formData.referredBy || undefined
+      );
+
+      if (user) {
+        toast.success("Signup successful!");
+        router.push("/profile");
+      } else {
+        toast.error("Signup failed");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,40 +97,30 @@ export function AuthForm({ initialType = "login" }: AuthFormProps) {
             {authType === "signup" && (
               <>
                 <div>
-                  <Label htmlFor="name" className="font-medium text-gray-700">
-                    Name
-                  </Label>
+                  <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Your Name"
-                    className="mt-1 focus:ring-2 focus:ring-primary/70 transition rounded-md"
                   />
                 </div>
                 <div>
-                  <Label
-                    htmlFor="referredBy"
-                    className="font-medium text-gray-700"
-                  >
-                    Referred By
-                  </Label>
+                  <Label htmlFor="referredBy">Referred By</Label>
                   <Input
                     id="referredBy"
                     name="referredBy"
                     value={formData.referredBy}
                     onChange={handleChange}
                     placeholder="Referral Code"
-                    className="mt-1 focus:ring-2 focus:ring-primary/70 transition rounded-md"
                   />
                 </div>
               </>
             )}
+
             <div>
-              <Label htmlFor="email" className="font-medium text-gray-700">
-                Email
-              </Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 name="email"
@@ -97,13 +128,10 @@ export function AuthForm({ initialType = "login" }: AuthFormProps) {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
-                className="mt-1 focus:ring-2 focus:ring-primary/70 transition rounded-md"
               />
             </div>
             <div>
-              <Label htmlFor="password" className="font-medium text-gray-700">
-                Password
-              </Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 name="password"
@@ -111,14 +139,22 @@ export function AuthForm({ initialType = "login" }: AuthFormProps) {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="********"
-                className="mt-1 focus:ring-2 focus:ring-primary/70 transition rounded-md"
               />
             </div>
+
             <Button
               type="submit"
-              className="w-full py-3 bg-primary text-white font-semibold hover:bg-primary/90 transition rounded-lg"
+              disabled={isLoading}
+              className="w-full py-3 bg-primary text-white hover:bg-primary/90 flex items-center justify-center gap-2"
             >
-              {authType === "login" ? "Login" : "Sign Up"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin h-4 w-4" />
+                  {authType === "login" ? "Logging in..." : "Signing up..."}
+                </>
+              ) : (
+                <>{authType === "login" ? "Login" : "Sign Up"}</>
+              )}
             </Button>
           </form>
 
@@ -131,7 +167,7 @@ export function AuthForm({ initialType = "login" }: AuthFormProps) {
               onClick={() =>
                 setAuthType(authType === "login" ? "signup" : "login")
               }
-              className="text-primary font-semibold underline underline-offset-4 hover:text-primary/80 transition-colors"
+              className="text-primary font-semibold underline underline-offset-4 hover:text-primary/80"
             >
               {authType === "login" ? "Sign Up" : "Login"}
             </button>

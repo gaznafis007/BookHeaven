@@ -48,6 +48,7 @@ export interface UserContextType {
     password: string,
     referredBy?: string
   ) => Promise<User | null>;
+  loginUser: (email: string, password: string) => Promise<User | null>;
   getUserById: (id: string) => Promise<User | null>;
   purchaseProduct: (userId: string, product: Product) => Promise<User | null>;
   setCurrentUser: (user: User | null) => void;

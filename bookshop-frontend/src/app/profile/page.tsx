@@ -1,13 +1,23 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/context/AuthContext";
 
 export default function ProfilePage() {
-  const { currentUser, loading } = useUser();
+  const router = useRouter();
+  const { currentUser, loading, logout } = useUser();
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully!");
+    router.push("/login");
+  };
 
   if (loading) {
     return (
@@ -29,30 +39,41 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 p-6 flex justify-center">
       <Card className="w-full max-w-3xl shadow-lg rounded-lg">
         {/* Header */}
-        <CardHeader className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8 pb-4">
-          <Avatar className="w-24 h-24">
-            <AvatarImage
-              src={`https://ui-avatars.com/api/?name=${currentUser.name}`}
-            />
-            <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <CardTitle className="text-2xl font-bold">
-              {currentUser.name}
-            </CardTitle>
-            <p className="text-gray-500">{currentUser.email}</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <Badge className="bg-indigo-600 text-white">
-                Credits: {currentUser.credits}
-              </Badge>
-              <Badge className="bg-green-600 text-white">
-                Referred By: {currentUser.referredBy || "N/A"}
-              </Badge>
-              <Badge className="bg-purple-600 text-white">
-                Referral Code: {currentUser.referralCode}
-              </Badge>
+        <CardHeader className="flex flex-col md:flex-row items-center md:items-start justify-between gap-4 md:gap-8 pb-4">
+          <div className="flex items-center gap-4">
+            <Avatar className="w-24 h-24">
+              <AvatarImage
+                src={`https://ui-avatars.com/api/?name=${currentUser.name}`}
+              />
+              <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
+            </Avatar>
+            <div>
+              <CardTitle className="text-2xl font-bold">
+                {currentUser.name}
+              </CardTitle>
+              <p className="text-gray-500">{currentUser.email}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Badge className="bg-indigo-600 text-white">
+                  Credits: {currentUser.credits}
+                </Badge>
+                <Badge className="bg-green-600 text-white">
+                  Referred By: {currentUser.referredBy || "N/A"}
+                </Badge>
+                <Badge className="bg-purple-600 text-white">
+                  Referral Code: {currentUser.referralCode}
+                </Badge>
+              </div>
             </div>
           </div>
+
+          {/* Logout Button */}
+          <Button
+            variant="destructive"
+            onClick={handleLogout}
+            className="self-end md:self-start hover:opacity-90 transition"
+          >
+            Logout
+          </Button>
         </CardHeader>
 
         <Separator />
