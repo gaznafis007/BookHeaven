@@ -1,5 +1,6 @@
 import { Hero } from "@/components/custom/Hero";
 import { Navbar } from "@/components/custom/Navbar";
+import { Services } from "@/components/custom/Services";
 import Image from "next/image";
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
     <main className="min-h-screen">
       <Navbar />
       <Hero />
+      <Services />
     </main>
   );
 }
