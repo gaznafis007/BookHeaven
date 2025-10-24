@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useState,
   ReactNode,
+  useCallback,
 } from "react";
 
 const API_URL = "https://bookshop-backend-api.vercel.app/api/users";
@@ -19,21 +20,42 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const handleError = (err: unknown) => {
+    if (err instanceof Error) setError(err.message);
+    else setError(String(err));
+  };
+
   // Fetch all users
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error("Failed to fetch users");
-      const data = await res.json();
+      const data: User[] = await res.json();
       setUsers(data);
       setError(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      handleError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  // Save currentUser to localStorage whenever it changes
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem("currentUser");
+    }
+  }, [currentUser]);
+
+  // Load currentUser and fetch users on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("currentUser");
+    if (storedUser) setCurrentUser(JSON.parse(storedUser));
+    fetchUsers();
+  }, [fetchUsers]);
 
   // Create new user (normal or referral)
   const createUser = async (
@@ -50,12 +72,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (!res.ok) throw new Error("Failed to create user");
-      const data = await res.json();
+      const data: User = await res.json();
       setUsers((prev) => [...prev, data]);
+      setCurrentUser(data); // auto login after signup
       return data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Create user error:", err);
-      setError(err.message);
+      handleError(err);
       return null;
     }
   };
@@ -65,10 +88,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res = await fetch(`${API_URL}/${id}`);
       if (!res.ok) throw new Error("User not found");
-      const data = await res.json();
+      const data: User = await res.json();
       return data;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      handleError(err);
       return null;
     }
   };
@@ -86,29 +109,28 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (!res.ok) throw new Error("Failed to process purchase");
-      const data = await res.json();
+      const data: { user: User } = await res.json();
       const updatedUser = data.user;
 
-      // Update users list
       setUsers((prev) =>
         prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
       );
-
-      // If current user matches, update it too
       if (currentUser && currentUser._id === updatedUser._id)
         setCurrentUser(updatedUser);
 
       return updatedUser;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Purchase error:", err);
-      setError(err.message);
+      handleError(err);
       return null;
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  // Logout function
+  const logout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("currentUser");
+  };
 
   return (
     <UserContext.Provider
@@ -122,6 +144,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         getUserById,
         purchaseProduct,
         setCurrentUser,
+        logout,
       }}
     >
       {children}

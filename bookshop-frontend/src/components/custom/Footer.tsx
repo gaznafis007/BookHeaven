@@ -15,7 +15,7 @@ export function Footer() {
             </div>
             <p className="text-primary-foreground/80 text-sm leading-relaxed">
               Your trusted destination for discovering and collecting the
-              world's best books.
+              world&apos;s best books.
             </p>
           </div>
 

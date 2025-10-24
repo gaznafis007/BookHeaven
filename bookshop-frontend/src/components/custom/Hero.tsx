@@ -1,4 +1,7 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export function Hero() {
   return (
@@ -61,10 +64,12 @@ export function Hero() {
           {/* Right Image */}
           <div className="relative h-96 md:h-full">
             <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-accent/20 rounded-2xl"></div>
-            <img
+            <Image
               src="https://ik.imagekit.io/uc8ejfj1j/drop-folder/books_5rYkZw_ZG.jpg"
               alt="Books collection"
-              className="w-full h-full object-cover rounded-2xl"
+              fill
+              className="object-cover rounded-2xl"
+              priority
             />
           </div>
         </div>

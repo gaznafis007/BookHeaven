@@ -43,7 +43,7 @@ export function Services() {
             Everything for Book Lovers
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We're committed to providing the best reading experience with
+            We&apos;re committed to providing the best reading experience with
             premium services and support.
           </p>
         </div>

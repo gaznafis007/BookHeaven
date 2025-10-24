@@ -11,6 +11,7 @@ export interface Product {
   author: string;
   price: number;
   purchasedAt?: string;
+  _id: string;
 }
 
 export interface ReferredUser {
@@ -50,4 +51,5 @@ export interface UserContextType {
   getUserById: (id: string) => Promise<User | null>;
   purchaseProduct: (userId: string, product: Product) => Promise<User | null>;
   setCurrentUser: (user: User | null) => void;
+  logout: () => void;
 }

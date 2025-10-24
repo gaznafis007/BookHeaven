@@ -36,11 +36,15 @@ export function AuthForm({ initialType = "login" }: AuthFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    authType === "login" ? handleLogin() : handleSignup();
+    if (authType === "login") {
+      handleLogin();
+    } else {
+      handleSignup();
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <Card className="w-full max-w-md rounded-xl shadow-lg border border-gray-200">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center text-gray-800">
@@ -122,12 +126,15 @@ export function AuthForm({ initialType = "login" }: AuthFormProps) {
             {authType === "login"
               ? "Don't have an account?"
               : "Already have an account?"}{" "}
-            <a
-              href={authType === "login" ? "/signup" : "/login"}
+            <button
+              type="button"
+              onClick={() =>
+                setAuthType(authType === "login" ? "signup" : "login")
+              }
               className="text-primary font-semibold underline underline-offset-4 hover:text-primary/80 transition-colors"
             >
               {authType === "login" ? "Sign Up" : "Login"}
-            </a>
+            </button>
           </p>
         </CardContent>
       </Card>
