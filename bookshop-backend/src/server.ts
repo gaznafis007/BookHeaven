@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import express, { Request, Response } from "express";
+import cors from "cors";
 import { logger } from "./utils/logger.js";
 import { connectDB } from "./db/db.js";
 import apiRoutes from "./routes/index.js";
@@ -9,6 +10,8 @@ dotenv.config();
 const app = express();
 
 connectDB();
+
+app.use(cors({ origin: "*" }));
 
 app.use(express.json());
 
@@ -23,6 +26,10 @@ app.get("/api", (_req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
     message: "Server is running!!!",
     version: "1.0.0",
+    routes: {
+      users: "/users",
+      products: "/products",
+    },
   });
 });
 
