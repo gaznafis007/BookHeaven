@@ -127,15 +127,12 @@ export function AuthForm({ initialType = "login" }: AuthFormProps) {
             {authType === "login"
               ? "Don't have an account?"
               : "Already have an account?"}{" "}
-            <button
-              type="button"
-              onClick={() =>
-                setAuthType(authType === "login" ? "signup" : "login")
-              }
-              className="text-primary font-medium underline hover:text-primary/80 transition"
+            <a
+              href={authType === "login" ? "/signup" : "/login"}
+              className="text-primary font-semibold underline underline-offset-4 hover:text-primary/80 transition-colors"
             >
               {authType === "login" ? "Sign Up" : "Login"}
-            </button>
+            </a>
           </p>
         </CardContent>
       </Card>
