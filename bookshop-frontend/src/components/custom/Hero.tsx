@@ -12,7 +12,6 @@ export function Hero() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
           <div className="space-y-6">
             <div className="space-y-3">
               <p className="text-primary font-semibold text-sm uppercase tracking-wide">
@@ -56,8 +55,6 @@ export function Hero() {
               </div>
             </div>
           </div>
-
-          {/* Right Image */}
           <div className="relative h-96 md:h-full">
             <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-accent/20 rounded-2xl"></div>
             <Image

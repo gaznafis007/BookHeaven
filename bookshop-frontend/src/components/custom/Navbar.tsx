@@ -11,7 +11,6 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 bg-background border-b border-border backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">
@@ -20,8 +19,6 @@ export function Navbar() {
             </div>
             <span className="text-xl font-bold text-foreground">BookHaven</span>
           </Link>
-
-          {/* Right Side */}
           <div className="flex items-center gap-3">
             {currentUser ? (
               <>

@@ -39,7 +39,6 @@ export default function BookDetailsPage() {
     (p) => p.userId === currentUser?._id
   );
 
-  // Check if user has enough credits
   const insufficientCredits =
     currentUser && book && currentUser.credits < book.price;
 
@@ -52,7 +51,6 @@ export default function BookDetailsPage() {
       const updatedUser = await purchaseProduct(currentUser._id, book);
       if (updatedUser) {
         toast.success(`Purchased ${book.title} successfully!`);
-        // Refresh book data to show updated purchase
         const res = await fetch(`${API_URL}/${id}`);
         const updatedBook: Product = await res.json();
         setBook(updatedBook);
@@ -60,7 +58,6 @@ export default function BookDetailsPage() {
     } catch (err: unknown) {
       console.error(err);
 
-      // Narrow type to Error to safely access message
       if (err instanceof Error) {
         toast.error(err.message || "Purchase failed");
       } else {

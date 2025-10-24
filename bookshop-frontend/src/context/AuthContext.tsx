@@ -9,7 +9,7 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
-import Cookies from "js-cookie"; // npm install js-cookie
+import Cookies from "js-cookie";
 
 const API_URL = "https://bookshop-backend-api.vercel.app/api/users";
 
@@ -62,7 +62,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [currentUser]);
 
-  /** Create new user (signup) */
   const createUser = async (
     name: string,
     email: string,
@@ -88,7 +87,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /** Login user */
   const loginUser = async (
     email: string,
     password: string
@@ -112,7 +110,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /** Get a user by ID */
   const getUserById = async (id: string): Promise<User | null> => {
     try {
       const res = await fetch(`${API_URL}/${id}`);
@@ -125,7 +122,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /** Purchase product */
   const purchaseProduct = async (
     userId: string,
     product: Product
@@ -148,7 +144,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const data = await res.json();
 
       if (!res.ok) {
-        // backend might send error in `error` field
         throw new Error(
           data.error || data.message || "Failed to process purchase"
         );
@@ -156,7 +151,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       const updatedUser = data.user;
 
-      // Update state
       setUsers((prev) =>
         prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
       );
@@ -171,7 +165,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /** Logout */
   const logout = () => {
     setCurrentUser(null);
     Cookies.remove("token");

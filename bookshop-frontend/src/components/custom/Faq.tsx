@@ -71,7 +71,7 @@ export function FAQ() {
                   {faq.question}
                 </h3>
                 <ChevronDown
-                  className={`w-5 h-5 text-primary transition-transform flex-shrink-0 ${
+                  className={`w-5 h-5 text-primary transition-transform shrink-0 ${
                     openIndex === index ? "rotate-180" : ""
                   }`}
                 />

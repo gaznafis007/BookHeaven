@@ -45,7 +45,6 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex justify-center">
       <Card className="w-full max-w-3xl shadow-lg rounded-lg">
-        {/* Header */}
         <CardHeader className="flex flex-col md:flex-row items-center md:items-start justify-between gap-4 md:gap-8 pb-4">
           <div className="flex items-center gap-4">
             <Avatar className="w-24 h-24">
@@ -78,7 +77,6 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Logout Button */}
           <Button
             variant="destructive"
             onClick={handleLogout}
@@ -90,7 +88,6 @@ export default function ProfilePage() {
 
         <Separator />
 
-        {/* Purchased Books */}
         <CardContent className="mt-4">
           <h2 className="text-xl font-semibold mb-4">
             Purchased Books ({currentUser.products.length})

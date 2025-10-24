@@ -5,7 +5,6 @@ export function Footer() {
     <footer className="bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
-          {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-primary-foreground rounded-lg flex items-center justify-center">
@@ -18,8 +17,6 @@ export function Footer() {
               world&apos;s best books.
             </p>
           </div>
-
-          {/* Quick Links */}
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
@@ -57,8 +54,6 @@ export function Footer() {
               </li>
             </ul>
           </div>
-
-          {/* Support */}
           <div>
             <h4 className="font-semibold mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
@@ -96,8 +91,6 @@ export function Footer() {
               </li>
             </ul>
           </div>
-
-          {/* Contact */}
           <div>
             <h4 className="font-semibold mb-4">Contact</h4>
             <ul className="space-y-3 text-sm">
@@ -126,8 +119,6 @@ export function Footer() {
             </ul>
           </div>
         </div>
-
-        {/* Divider */}
         <div className="border-t border-primary-foreground/20 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/80">
             <p>&copy; 2025 BookHaven. All rights reserved.</p>
