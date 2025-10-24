@@ -9,9 +9,11 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
+import Cookies from "js-cookie"; // npm install js-cookie
 
 const API_URL = "https://bookshop-backend-api.vercel.app/api/users";
 
+// Create context
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
@@ -20,12 +22,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Handles errors in async functions
+   */
   const handleError = (err: unknown) => {
     if (err instanceof Error) setError(err.message);
     else setError(String(err));
   };
 
-  // Fetch all users
+  /**
+   * Fetch all users from backend
+   */
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
@@ -41,23 +48,36 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // Save currentUser to localStorage whenever it changes
+  /**
+   * Load currentUser and token from cookies on mount
+   */
+  useEffect(() => {
+    const token = Cookies.get("token");
+    const storedUser = Cookies.get("currentUser");
+    if (token && storedUser) {
+      setCurrentUser(JSON.parse(storedUser));
+      fetchUsers();
+    } else {
+      setLoading(false);
+    }
+  }, [fetchUsers]);
+
+  /**
+   * Save currentUser to cookie whenever it changes
+   */
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      Cookies.set("currentUser", JSON.stringify(currentUser), { expires: 1 });
+      Cookies.set("token", "true", { expires: 1 });
     } else {
-      localStorage.removeItem("currentUser");
+      Cookies.remove("currentUser");
+      Cookies.remove("token");
     }
   }, [currentUser]);
 
-  // Load currentUser and fetch users on mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem("currentUser");
-    if (storedUser) setCurrentUser(JSON.parse(storedUser));
-    fetchUsers();
-  }, [fetchUsers]);
-
-  // Create new user (normal or referral)
+  /**
+   * Create a new user and auto-login
+   */
   const createUser = async (
     name: string,
     email: string,
@@ -74,7 +94,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       if (!res.ok) throw new Error("Failed to create user");
       const data: User = await res.json();
       setUsers((prev) => [...prev, data]);
-      setCurrentUser(data); // auto login after signup
+      setCurrentUser(data); // auto-login
       return data;
     } catch (err: unknown) {
       console.error("Create user error:", err);
@@ -83,7 +103,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Get user by ID
+  /**
+   * Get a user by their ID
+   */
   const getUserById = async (id: string): Promise<User | null> => {
     try {
       const res = await fetch(`${API_URL}/${id}`);
@@ -96,13 +118,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Purchase product
+  /**
+   * Purchase a product for the current user
+   */
   const purchaseProduct = async (
     userId: string,
     product: Product
   ): Promise<User | null> => {
     try {
-      const res = await fetch(`${API_URL}/${userId}/purchaserchase`, {
+      const res = await fetch(`${API_URL}/${userId}/purchase`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(product),
@@ -112,9 +136,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const data: { user: User } = await res.json();
       const updatedUser = data.user;
 
+      // Update users list
       setUsers((prev) =>
         prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
       );
+
+      // Update currentUser if it's the same
       if (currentUser && currentUser._id === updatedUser._id)
         setCurrentUser(updatedUser);
 
@@ -126,10 +153,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Logout function
+  /**
+   * Logout the user
+   */
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem("currentUser");
+    Cookies.remove("token");
+    Cookies.remove("currentUser");
   };
 
   return (
@@ -152,6 +182,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+/**
+ * Custom hook to use UserContext
+ */
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) throw new Error("useUser must be used within a UserProvider");
