@@ -1,3 +1,4 @@
+import { FAQ } from "@/components/custom/Faq";
 import { Hero } from "@/components/custom/Hero";
 import { Navbar } from "@/components/custom/Navbar";
 import { Services } from "@/components/custom/Services";
@@ -9,6 +10,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Services />
+      <FAQ />
     </main>
   );
 }
