@@ -1,74 +1,170 @@
-# Bookshop
+# 📚 **BookHeaven — Referral-Based Digital Bookstore** 🚀
 
-A full-stack web application for buying and managing books with referral and credit system.
+Welcome to **BookHeaven**, a modern, minimal full-stack web app where users can **buy books using credits**, **earn rewards through referrals**, and **manage purchases** — all through a sleek and responsive UI.
 
----
+## 🔑 **Core Features**
 
-## Features
+- 👤 **User Authentication**
 
-- User authentication: Signup and Login
-- Referral system with credits
-- Purchase books using credits
-- View purchased books
-- Copy referral code
-- Responsive UI built with Next.js and Tailwind CSS
+  - Secure signup and login powered by a custom authentication system.
 
----
+- 🎁 **Referral System**
 
-## Tech Stack
+  - Every user receives a **unique referral code**.
+  - When someone signs up using your referral link, **both users earn 2 credits**.
+  - Credits are only awarded on the **first purchase** made by a referred user.
 
-- **Frontend:** Next.js, React, TypeScript, Tailwind CSS, Sonner (for toast notifications)
-- **Backend:** Node.js, Express, MongoDB, Mongoose
-- **Authentication:** Password hashing with bcrypt
-- **State Management:** React Context API
-- **Deployment:** Vercel (frontend & backend)
+- 💰 **Credit-Based Purchases**
 
----
+  - Use earned credits to purchase books directly within the app.
 
-## Installation
+- 📚 **Book Store**
 
-1. **Clone the repository:**
+  - Browse, explore, and purchase books through a simple and elegant UI.
 
-```bash
-git clone https://github.com/your-username/bookshop.git
-cd bookshop
-```
+- 🧾 **User Dashboard**
 
-2. **Install dependencies for frontend and backend:**
+  - Track total credits, referred users, and past purchases with ease.
 
-```bash
-# Frontend
-cd bookshop-frontend
-npm install
+- 🧠 **Core Logic Overview**
 
-# Backend
-cd ../bookshop-backend
-npm install
-```
+  - Referral bonuses: **2 credits each** (referrer + referred user)
+  - Prevents duplicate crediting and fraudulent bonuses
+  - Credits are automatically deducted upon purchase
+  - Clean, responsive UI for a seamless experience
 
-3. **Configure environment variables:**
+## 🧩 **Tech Stack**
 
-Create a `.env` file in the backend folder:
+| Area               | Technology                                          |
+| ------------------ | --------------------------------------------------- |
+| **Frontend**       | Next.js · TypeScript · Tailwind CSS · Shadcn/UI     |
+| **Backend**        | Node.js · TypeScript · Express · MongoDB (Mongoose) |
+| **Authentication** | Custom auth system                                  |
+| **Deployment**     | Vercel                                              |
 
-```
-MONGO_URI=your_mongodb_connection_string
-PORT=5000
-```
+## 🚀 **Getting Started (Local Setup)**
 
-4. **Run the app:**
+Follow these steps to run **BookHeaven** locally.
+
+### 🖥️ **Clone the Repository**
 
 ```bash
-# Start backend
-cd bookshop-backend
-npm run dev
+git clone https://github.com/Gazi2050/BookHeaven.git
 
-# Start frontend
-cd ../bookshop-frontend
-npm run dev
+cd BookHeaven
 ```
-
-Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ---
 
-## Project Structure
+### 🌐 **Frontend Setup**
+
+```bash
+cd frontend
+
+pnpm install
+
+pnpm run dev
+```
+
+- Access frontend at: [http://localhost:3000](http://localhost:3000)
+
+---
+
+### ⚙️ **Backend Setup**
+
+```bash
+cd ../backend
+
+cp .env.example .env
+
+pnpm install
+
+pnpm run dev
+```
+
+- Access backend at: [http://localhost:5000](http://localhost:5000)
+
+---
+
+## 📂 **Project Structure**
+
+### 🖥️ Frontend (`frontend`)
+
+```
+frontend/
+├── components.json
+├── next.config.ts
+├── package.json
+├── postcss.config.mjs
+├── src/
+│   ├── app/
+│   │   ├── books/
+│   │   │   ├── [id]/page.tsx
+│   │   │   └── page.tsx
+│   │   ├── login/page.tsx
+│   │   ├── signup/page.tsx
+│   │   ├── profile/page.tsx
+│   │   ├── page.tsx
+│   │   ├── layout.tsx
+│   │   └── globals.css
+│   ├── components/
+│   │   ├── custom/
+│   │   │   ├── AuthForm.tsx
+│   │   │   ├── Hero.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   └── Services.tsx
+│   │   └── ui/
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── input.tsx
+│   │       ├── label.tsx
+│   │       └── sonner.tsx
+│   ├── context/AuthContext.tsx
+│   ├── lib/utils.ts
+│   └── types/types.ts
+└── tsconfig.json
+```
+
+### ⚙️ Backend (`backend`)
+
+```
+backend/
+├── .env.example
+├── package.json
+├── tsconfig.json
+├── src/
+│   ├── server.ts
+│   ├── routes/
+│   │   ├── index.ts
+│   │   ├── users.route.ts
+│   │   └── products.route.ts
+│   ├── core/
+│   │   └── users.core.ts
+│   ├── db/
+│   │   ├── db.ts
+│   │   └── schema/
+│   │       ├── users.schema.ts
+│   │       └── products.schema.ts
+│   ├── utils/logger.ts
+│   └── validator/users.validator.ts
+```
+
+### 🔗 **API Endpoints**
+
+### 👤 `/api/users`
+
+| Method    | Endpoint              | Description                         |
+| --------- | --------------------- | ----------------------------------- |
+| **GET**   | `/users`              | Get all users                       |
+| **GET**   | `/users/:id`          | Get a user by ID                    |
+| **POST**  | `/users`              | Register a new user                 |
+| **POST**  | `/users/login`        | Log in a user                       |
+| **PATCH** | `/users/:id/purchase` | Handle purchases & referral rewards |
+
+### 📘 `/api/products`
+
+| Method  | Endpoint        | Description              |
+| ------- | --------------- | ------------------------ |
+| **GET** | `/products`     | Fetch all books          |
+| **GET** | `/products/:id` | Fetch book details by ID |
